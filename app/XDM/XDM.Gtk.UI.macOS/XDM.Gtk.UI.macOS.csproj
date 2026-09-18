@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <AssemblyName>xdm-app</AssemblyName>
+    <Description>Xtreme Download Manager for macOS</Description>
+    <AssemblyVersion>8.0.1</AssemblyVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <DefineConstants>TRACE;OSX;NET9_0_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Import shared projects -->
+  <Import Project="..\XDM.Core\XDM.Core.projitems" Label="Shared" />
+  <Import Project="..\XDM.Messaging\XDM.Messaging.projitems" Label="Shared" />
+  <Import Project="..\XDM.Compatibility\XDM.Compatibility.projitems" Label="Shared" />
+
+  <!-- NuGet packages -->
+  <ItemGroup>
+    <PackageReference Include="GtkSharp" Version="3.24.24.38" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+  </ItemGroup>
+
+  <!-- Bundle FFmpeg and yt-dlp (will be added later) -->
+  <ItemGroup>
+    <Content Include="Resources\ffmpeg" CopyToOutputDirectory="Always" Condition="Exists('Resources\ffmpeg')" />
+    <Content Include="Resources\yt-dlp" CopyToOutputDirectory="Always" Condition="Exists('Resources\yt-dlp')" />
+  </ItemGroup>
+
+  <!-- Copy language files from shared Lang directory -->
+  <ItemGroup>
+    <Content Include="..\Lang\**" CopyToOutputDirectory="Always" LinkBase="Lang\" />
+  </ItemGroup>
+</Project>
