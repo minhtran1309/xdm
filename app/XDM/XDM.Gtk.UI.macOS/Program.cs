@@ -24,12 +24,17 @@ namespace XDM.Gtk.UI.macOS
             try
             {
                 // Load configuration from macOS standard location
-                Config.DataDir = System.IO.Path.Combine(
+                var macOSAppDir = System.IO.Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                     "Library", "Application Support", "XDM"
                 );
 
+                // Initialize config with LoadConfig to load persisted settings
                 Config.LoadConfig();
+
+                // Override with macOS-standard directories (must be done after LoadConfig)
+                Config.AppDir = macOSAppDir;
+                Config.DataDir = System.IO.Path.Combine(macOSAppDir, "Data");
 
                 // Setup debug logging if enabled
                 var debugMode = Environment.GetEnvironmentVariable("XDM_DEBUG_MODE");
