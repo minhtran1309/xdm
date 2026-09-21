@@ -36,4 +36,15 @@
   <ItemGroup>
     <Content Include="..\Lang\**" CopyToOutputDirectory="Always" LinkBase="Lang\" />
   </ItemGroup>
+
+  <!-- Include Glade UI files if they exist -->
+  <ItemGroup>
+    <EmbeddedResource Include="glade\**\*.glade" Condition="Exists('glade')" />
+  </ItemGroup>
+
+  <!-- Include image resources -->
+  <ItemGroup>
+    <Content Include="images\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('images')" />
+    <Content Include="svg-icons\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('svg-icons')" />
+  </ItemGroup>
 </Project>
