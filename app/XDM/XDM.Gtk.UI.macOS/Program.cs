@@ -9,9 +9,8 @@ using XDMApp = XDM.Core.Application;
 using System.Linq;
 using XDM.Core.BrowserMonitoring;
 using XDM.Core.Util;
-using XDM.GtkUI;
 
-namespace XDM.Gtk.UI.macOS
+namespace XDM.GtkUI
 {
     class Program
     {
