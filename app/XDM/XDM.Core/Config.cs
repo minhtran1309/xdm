@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TraceLog;
 using XDM.Core.IO;
 using XDM.Core.Util;
@@ -242,6 +243,20 @@ namespace XDM.Core
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".xdm-app-data"), "Data");
             AppDir = path ?? Path.Combine(
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".xdm-app-data"));
+#endif
+
+#if NET5_0_OR_GREATER
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                AppDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "Library", "Application Support", "XDM"
+                );
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                AppDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "xdm");
+            }
 #endif
             instance = new Config
             {
