@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockServer", "MockServer\Mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XDM.Gtk.UI", "XDM.Gtk.UI\XDM.Gtk.UI.csproj", "{957EEA56-E3B8-48E5-81BB-93A6E59B155C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XDM.Gtk.UI.macOS", "XDM.Gtk.UI.macOS\XDM.Gtk.UI.macOS.csproj", "{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XDM.Wpf.UI", "XDM.Wpf.UI\XDM.Wpf.UI.csproj", "{71AD2923-E0DE-4691-AD8D-279457EC4091}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{111CBD00-4D30-4216-9F92-42F8AB546E4B}"
@@ -41,6 +43,9 @@ Global
 		XDM.Compatibility\XDM.Compatibility.projitems*{957eea56-e3b8-48e5-81bb-93a6e59b155c}*SharedItemsImports = 5
 		XDM.Core\XDM.Core.projitems*{957eea56-e3b8-48e5-81bb-93a6e59b155c}*SharedItemsImports = 5
 		XDM.Messaging\XDM.Messaging.projitems*{957eea56-e3b8-48e5-81bb-93a6e59b155c}*SharedItemsImports = 5
+		XDM.Compatibility\XDM.Compatibility.projitems*{79b9ed38-4537-4162-8ae9-ab4bef99c13b}*SharedItemsImports = 5
+		XDM.Core\XDM.Core.projitems*{79b9ed38-4537-4162-8ae9-ab4bef99c13b}*SharedItemsImports = 5
+		XDM.Messaging\XDM.Messaging.projitems*{79b9ed38-4537-4162-8ae9-ab4bef99c13b}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +114,24 @@ Global
 		{957EEA56-E3B8-48E5-81BB-93A6E59B155C}.Release|x64.Build.0 = Release|x64
 		{957EEA56-E3B8-48E5-81BB-93A6E59B155C}.Release|x86.ActiveCfg = Release|x64
 		{957EEA56-E3B8-48E5-81BB-93A6E59B155C}.Release|x86.Build.0 = Release|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|Any CPU.Build.0 = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|ARM.ActiveCfg = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|ARM64.ActiveCfg = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|x64.ActiveCfg = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|x64.Build.0 = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|x86.ActiveCfg = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Debug|x86.Build.0 = Debug|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|ARM.ActiveCfg = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|ARM.Build.0 = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|ARM64.Build.0 = Release|Any CPU
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|x64.ActiveCfg = Release|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|x64.Build.0 = Release|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|x86.ActiveCfg = Release|x64
+		{79B9ED38-4537-4162-8AE9-AB4BEF99C13B}.Release|x86.Build.0 = Release|x64
 		{71AD2923-E0DE-4691-AD8D-279457EC4091}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{71AD2923-E0DE-4691-AD8D-279457EC4091}.Debug|Any CPU.Build.0 = Debug|x86
 		{71AD2923-E0DE-4691-AD8D-279457EC4091}.Debug|ARM.ActiveCfg = Debug|x86
