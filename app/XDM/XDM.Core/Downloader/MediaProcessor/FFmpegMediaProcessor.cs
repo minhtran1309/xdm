@@ -200,12 +200,15 @@ namespace XDM.Core.MediaProcessor
 
             // Priority 1: Check bundled Resources directory
             var appDir = AppDomain.CurrentDomain.BaseDirectory;
-            var bundledBinaryName = PlatformHelper.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
-            var bundledPath = Path.Combine(appDir, "Resources", bundledBinaryName);
+            var bundledBinaryNames = PlatformHelper.IsWindows() ? new string[] { "ffmpeg-x86.exe", "ffmpeg.exe" } : new string[] { "ffmpeg" };
 
-            if (File.Exists(bundledPath))
+            foreach (var bundledBinaryName in bundledBinaryNames)
             {
-                return bundledPath;
+                var bundledPath = Path.Combine(appDir, "Resources", bundledBinaryName);
+                if (File.Exists(bundledPath))
+                {
+                    return bundledPath;
+                }
             }
 
             // Continue with existing search logic
