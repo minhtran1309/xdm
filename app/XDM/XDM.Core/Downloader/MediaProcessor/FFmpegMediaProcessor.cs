@@ -197,6 +197,18 @@ namespace XDM.Core.MediaProcessor
             var executableNames =
                 Environment.OSVersion.Platform == PlatformID.Win32NT ?
                 new string[] { "ffmpeg-x86.exe", "ffmpeg.exe" } : new string[] { "ffmpeg" };
+
+            // Priority 1: Check bundled Resources directory
+            var appDir = AppDomain.CurrentDomain.BaseDirectory;
+            var bundledBinaryName = PlatformHelper.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
+            var bundledPath = Path.Combine(appDir, "Resources", bundledBinaryName);
+
+            if (File.Exists(bundledPath))
+            {
+                return bundledPath;
+            }
+
+            // Continue with existing search logic
             foreach (var executableName in executableNames)
             {
                 var path = Path.Combine(Config.AppDir, executableName);

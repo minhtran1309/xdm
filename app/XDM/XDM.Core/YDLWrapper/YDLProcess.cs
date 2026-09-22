@@ -137,6 +137,18 @@ namespace YDLWrapper
             string? binPath = null;
             string? execName = null;
             var found = false;
+
+            // Priority 1: Check bundled Resources directory
+            var appDir = AppDomain.CurrentDomain.BaseDirectory;
+            var bundledBinaryName = PlatformHelper.IsWindows() ? "yt-dlp.exe" : "yt-dlp";
+            var bundledPath = Path.Combine(appDir, "Resources", bundledBinaryName);
+
+            if (File.Exists(bundledPath))
+            {
+                return new YtBinary { BinaryType = GetYtBinaryType(bundledBinaryName), Path = bundledPath };
+            }
+
+            // Continue with existing search logic
             foreach (var executableName in executableNames)
             {
                 execName = executableName;
