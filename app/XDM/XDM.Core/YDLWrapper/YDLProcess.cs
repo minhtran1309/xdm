@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using TraceLog;
 using XDM.Core;
@@ -140,7 +141,7 @@ namespace YDLWrapper
 
             // Priority 1: Check bundled Resources directory
             var appDir = AppDomain.CurrentDomain.BaseDirectory;
-            var bundledBinaryName = PlatformHelper.IsWindows() ? "yt-dlp.exe" : "yt-dlp";
+            var bundledBinaryName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "yt-dlp.exe" : "yt-dlp";
             var bundledPath = Path.Combine(appDir, "Resources", bundledBinaryName);
 
             if (File.Exists(bundledPath))

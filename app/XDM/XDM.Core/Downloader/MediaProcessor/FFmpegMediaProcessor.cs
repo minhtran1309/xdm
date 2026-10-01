@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -200,7 +201,7 @@ namespace XDM.Core.MediaProcessor
 
             // Priority 1: Check bundled Resources directory
             var appDir = AppDomain.CurrentDomain.BaseDirectory;
-            var bundledBinaryNames = PlatformHelper.IsWindows() ? new string[] { "ffmpeg-x86.exe", "ffmpeg.exe" } : new string[] { "ffmpeg" };
+            var bundledBinaryNames = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? new string[] { "ffmpeg-x86.exe", "ffmpeg.exe" } : new string[] { "ffmpeg" };
 
             foreach (var bundledBinaryName in bundledBinaryNames)
             {
