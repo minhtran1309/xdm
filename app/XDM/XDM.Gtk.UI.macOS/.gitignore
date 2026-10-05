@@ -1,2 +1,6 @@
 Resources/ffmpeg
 Resources/yt-dlp
+bin/
+obj/
+XDM.app/
+XDM-macOS.dmg
