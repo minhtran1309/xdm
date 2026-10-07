@@ -46,5 +46,6 @@
   <ItemGroup>
     <Content Include="images\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('images')" />
     <Content Include="svg-icons\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('svg-icons')" />
+    <Content Include="xdm-logo-512.png" CopyToOutputDirectory="Always" Condition="Exists('xdm-logo-512.png')" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ rm -f XDM-macOS.dmg
 
 # Build and publish
 echo "Publishing application..."
-dotnet publish -c Release -r osx-arm64 --self-contained
+/opt/homebrew/bin/dotnet publish -c Release -r osx-arm64 --self-contained
 
 # Create app bundle structure
 echo "Creating app bundle..."
