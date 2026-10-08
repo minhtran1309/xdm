@@ -49,7 +49,15 @@ namespace XDM.GtkUI.Dialogs.NewDownload
         public static NewDownloadWindow CreateFromGladeFile()
         {
             var builder = new Builder();
-            builder.AddFromFile(IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "new-download-window.glade"));
+            var gladePath = IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "new-download-window.glade");
+            // Normalize path for GTK/GLib on macOS
+            gladePath = IoPath.GetFullPath(gladePath);
+            Console.Error.WriteLine($"[DEBUG] Loading glade from: {gladePath}");
+            Console.Error.WriteLine($"[DEBUG] File exists: {System.IO.File.Exists(gladePath)}");
+
+            // Use the FromString approach instead of AddFromFile to avoid encoding issues
+            var gladeContent = System.IO.File.ReadAllText(gladePath);
+            builder.AddFromString(gladeContent);
             return new NewDownloadWindow(builder);
         }
 
@@ -175,7 +183,13 @@ namespace XDM.GtkUI.Dialogs.NewDownload
 
         public void ShowWindow()
         {
+            Console.Error.WriteLine("[DEBUG] NewDownloadWindow.ShowWindow() called");
+            this.ShowAll();
+            Console.Error.WriteLine("[DEBUG] ShowAll() completed");
             this.Show();
+            Console.Error.WriteLine("[DEBUG] Show() completed");
+            this.Present();
+            Console.Error.WriteLine("[DEBUG] Present() completed");
         }
 
         private void CmbLocation_Changed(object? sender, EventArgs e)
@@ -212,7 +226,26 @@ namespace XDM.GtkUI.Dialogs.NewDownload
 
         private void btnDownload_Click(object? sender, EventArgs e)
         {
-            DownloadClicked?.Invoke(sender, e);
+            Console.Error.WriteLine("[DEBUG] btnDownload_Click called");
+            Console.Error.WriteLine($"[DEBUG] URL: {this.Url}");
+            Console.Error.WriteLine($"[DEBUG] FileName: {this.SelectedFileName}");
+            Console.Error.WriteLine($"[DEBUG] DownloadClicked handler count: {DownloadClicked?.GetInvocationList()?.Length ?? 0}");
+            try
+            {
+                Console.Error.WriteLine("[DEBUG] About to invoke DownloadClicked event");
+                DownloadClicked?.Invoke(sender, e);
+                Console.Error.WriteLine("[DEBUG] DownloadClicked event invoked successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[DEBUG] Exception in DownloadClicked: {ex.Message}");
+                Console.Error.WriteLine($"[DEBUG] Stack trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.Error.WriteLine($"[DEBUG] Inner exception: {ex.InnerException.Message}");
+                    Console.Error.WriteLine($"[DEBUG] Inner stack trace: {ex.InnerException.StackTrace}");
+                }
+            }
         }
 
         private void btnDownloadLater_Click(object? sender, EventArgs e)

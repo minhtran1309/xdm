@@ -14,8 +14,11 @@ namespace XDM.Core.UI
         public static void CreateAndShowDialog(INewDownloadDialog window, Message? message = null,
             Action? destroyCallback = null)
         {
+            Console.Error.WriteLine("[DEBUG] CreateAndShowDialog started");
             window.DestroyEvent += (_, _) => destroyCallback?.Invoke();
+            Console.Error.WriteLine("[DEBUG] DestroyEvent handler attached");
             window.SetFolderValues(CommonUtils.GetFolderValues());
+            Console.Error.WriteLine("[DEBUG] Folder values set");
             if (Config.Instance.FolderSelectionMode == FolderSelectionMode.Auto)
             {
                 window.SeletedFolderIndex = 0;
@@ -105,7 +108,9 @@ namespace XDM.Core.UI
                 ApplicationContext.Application.ShowQueueWindow(s);
             };
 
+            Console.Error.WriteLine("[DEBUG] About to call ShowWindow()");
             window.ShowWindow();
+            Console.Error.WriteLine("[DEBUG] ShowWindow() returned");
         }
 
         //public static void CreateAndShowDialog(IApp ApplicationContext.Core, IAppUI appUi, INewDownloadDialogSkeleton window)

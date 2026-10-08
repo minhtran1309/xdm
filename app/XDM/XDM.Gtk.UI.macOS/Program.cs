@@ -35,6 +35,16 @@ namespace XDM.GtkUI
                 Config.AppDir = macOSAppDir;
                 Config.DataDir = System.IO.Path.Combine(macOSAppDir, "Data");
 
+                // Ensure macOS directories exist
+                if (!System.IO.Directory.Exists(Config.AppDir))
+                {
+                    System.IO.Directory.CreateDirectory(Config.AppDir);
+                }
+                if (!System.IO.Directory.Exists(Config.DataDir))
+                {
+                    System.IO.Directory.CreateDirectory(Config.DataDir);
+                }
+
                 // Setup debug logging if enabled
                 var debugMode = Environment.GetEnvironmentVariable("XDM_DEBUG_MODE");
                 if (!string.IsNullOrEmpty(debugMode) && debugMode == "1")
@@ -99,6 +109,11 @@ namespace XDM.GtkUI
 
                 Log.Debug("Processing arguments...");
                 ArgsProcessor.Process(args);
+
+                Log.Debug("Showing main window...");
+                win.ShowAll();
+                win.Show();
+                win.Present();
 
                 Log.Debug("Gtk Run...");
                 Gtk.Application.Run();

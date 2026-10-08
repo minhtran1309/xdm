@@ -26,7 +26,12 @@ namespace XDM.Core
 
         private void AppInstance_Initialized(object? sender, EventArgs e)
         {
-            AppDB.Instance.Init(Path.Combine(Config.AppDir, "downloads.db"));
+            Console.Error.WriteLine("[DEBUG] AppInstance_Initialized called");
+            Console.Error.WriteLine($"[DEBUG] Config.AppDir: {Config.AppDir}");
+            var dbPath = Path.Combine(Config.AppDir, "downloads.db");
+            Console.Error.WriteLine($"[DEBUG] DB path: {dbPath}");
+            var initResult = AppDB.Instance.Init(dbPath);
+            Console.Error.WriteLine($"[DEBUG] AppDB.Init result: {initResult}");
             AttachedEventHandler();
             LoadDownloadList();
             UpdateToolbarButtonState();
@@ -413,9 +418,22 @@ namespace XDM.Core
         {
             ApplicationContext.MainWindow.NewDownloadClicked += (s, e) =>
             {
+                Console.Error.WriteLine("[DEBUG] NewDownloadClicked event fired");
                 ApplicationContext.MainWindow.RunOnUIThread(() =>
                 {
-                    NewDownloadDialogUIController.CreateAndShowDialog(CreateNewDownloadDialog(true));
+                    Console.Error.WriteLine("[DEBUG] Inside RunOnUIThread");
+                    try
+                    {
+                        Console.Error.WriteLine("[DEBUG] About to CreateNewDownloadDialog");
+                        var dialog = CreateNewDownloadDialog(true);
+                        Console.Error.WriteLine("[DEBUG] Dialog created, calling CreateAndShowDialog");
+                        NewDownloadDialogUIController.CreateAndShowDialog(dialog);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"[DEBUG] Exception: {ex.Message}");
+                        Console.Error.WriteLine($"[DEBUG] Stack trace: {ex.StackTrace}");
+                    }
                 });
             };
 

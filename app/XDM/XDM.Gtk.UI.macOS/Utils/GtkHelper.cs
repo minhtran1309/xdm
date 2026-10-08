@@ -467,5 +467,23 @@ namespace XDM.GtkUI.Utils
             var iter1 = sortedModel.ConvertIterToChildIter(iter);
             return filterModel.ConvertIterToChildIter(iter1);
         }
+
+        /// <summary>
+        /// Safely loads a glade file into a GTK Builder, working around macOS path encoding issues.
+        /// On macOS, Builder.AddFromFile() can throw "Invalid byte sequence in conversion input" due to
+        /// GLib.Marshaller.StringToFilenamePtr() encoding problems. This method bypasses the issue by
+        /// reading the file content and using AddFromString() instead.
+        /// </summary>
+        /// <param name="builder">The GTK Builder to load into</param>
+        /// <param name="gladeFilePath">Full path to the glade file</param>
+        public static void SafeLoadGlade(Builder builder, string gladeFilePath)
+        {
+            // Normalize the path
+            gladeFilePath = Path.GetFullPath(gladeFilePath);
+
+            // Read content and load via AddFromString to avoid path encoding issues on macOS
+            var gladeContent = File.ReadAllText(gladeFilePath);
+            builder.AddFromString(gladeContent);
+        }
     }
 }
