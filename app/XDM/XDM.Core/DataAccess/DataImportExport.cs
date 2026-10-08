@@ -1,5 +1,11 @@
 ﻿using System;
+#if OSX
+using Microsoft.Data.Sqlite;
+using SQLiteConnection = Microsoft.Data.Sqlite.SqliteConnection;
+using SQLiteCommand = Microsoft.Data.Sqlite.SqliteCommand;
+#else
 using System.Data.SQLite;
+#endif
 using System.IO;
 using TraceLog;
 
@@ -11,6 +17,15 @@ namespace XDM.Core.DataAccess
         {
             try
             {
+#if OSX
+                // Microsoft.Data.Sqlite doesn't have BackupDatabase, use ATTACH/DETACH instead
+                using var cmd = new SQLiteCommand($"ATTACH '{file}' as backup", sql);
+                cmd.ExecuteNonQuery();
+                using var copyCmd = new SQLiteCommand("CREATE TABLE backup.downloads AS SELECT * FROM downloads", sql);
+                copyCmd.ExecuteNonQuery();
+                using var detachCmd = new SQLiteCommand("DETACH backup", sql);
+                detachCmd.ExecuteNonQuery();
+#else
                 var cs = $"URI=file:{file}";
                 if (!File.Exists(file))
                 {
@@ -19,6 +34,7 @@ namespace XDM.Core.DataAccess
                 using var dest = new SQLiteConnection(cs);
                 dest.Open();
                 sql.BackupDatabase(dest, "main", "main", -1, null, 0);
+#endif
                 return true;
             }
             catch (Exception ex)

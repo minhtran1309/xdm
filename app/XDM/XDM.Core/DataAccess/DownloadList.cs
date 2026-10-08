@@ -1,7 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+#if OSX
+using Microsoft.Data.Sqlite;
+using SQLiteConnection = Microsoft.Data.Sqlite.SqliteConnection;
+using SQLiteCommand = Microsoft.Data.Sqlite.SqliteCommand;
+using SQLiteDataReader = Microsoft.Data.Sqlite.SqliteDataReader;
+using SQLiteParameter = Microsoft.Data.Sqlite.SqliteParameter;
+using SQLiteParameterCollection = Microsoft.Data.Sqlite.SqliteParameterCollection;
+#else
 using System.Data.SQLite;
+#endif
 using System.IO;
 using System.Linq;
 using System.Text;

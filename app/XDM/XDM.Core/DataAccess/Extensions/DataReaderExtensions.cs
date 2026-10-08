@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+#if OSX
+using Microsoft.Data.Sqlite;
+using SQLiteDataReader = Microsoft.Data.Sqlite.SqliteDataReader;
+#else
 using System.Data.SQLite;
+#endif
 using System.Linq;
 using System.Text;
 

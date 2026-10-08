@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+#if OSX
+using Microsoft.Data.Sqlite;
+using SQLiteConnection = Microsoft.Data.Sqlite.SqliteConnection;
+using SQLiteCommand = Microsoft.Data.Sqlite.SqliteCommand;
+#else
 using System.Data.SQLite;
+#endif
 using System.Linq;
 using System.Text;
 
@@ -34,8 +40,7 @@ namespace XDM.Core.DataAccess
                                             proxy_pass TEXT,
                                             proxy_type INT
                                         ) WITHOUT ROWID";
-            using var cmd = new SQLiteCommand(c);
-            cmd.CommandText = query;
+            using var cmd = new SQLiteCommand(query, c);
             cmd.ExecuteNonQuery();
         }
 

@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <AssemblyName>xdm-app</AssemblyName>
     <Description>Xtreme Download Manager for macOS</Description>
     <AssemblyVersion>8.0.1</AssemblyVersion>
@@ -23,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="GtkSharp" Version="3.24.24.38" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
   </ItemGroup>
 
   <!-- Bundle FFmpeg and yt-dlp (will be added later) -->
@@ -39,7 +40,7 @@
 
   <!-- Include Glade UI files if they exist -->
   <ItemGroup>
-    <EmbeddedResource Include="glade\**\*.glade" Condition="Exists('glade')" />
+    <Content Include="glade\**\*.glade" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" ExcludeFromSingleFile="true" Condition="Exists('glade')" />
   </ItemGroup>
 
   <!-- Include image resources -->
