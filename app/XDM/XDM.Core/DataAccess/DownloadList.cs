@@ -211,20 +211,20 @@ namespace XDM.Core.DataAccess
                     SetParam("@size", entry.Size, cmdInsertOne.Parameters);
                     SetParam("@status", (int)entry.Status, cmdInsertOne.Parameters);
                     SetParam("@progress", entry.Progress, cmdInsertOne.Parameters);
-                    SetParam("@download_type", entry.DownloadType, cmdInsertOne.Parameters);
+                    SetParam("@download_type", (object?)entry.DownloadType ?? DBNull.Value, cmdInsertOne.Parameters);
                     SetParam("@filenamefetchmode", (int)entry.FileNameFetchMode, cmdInsertOne.Parameters);
                     SetParam("@maxspeedlimitinkib", entry.MaxSpeedLimitInKiB, cmdInsertOne.Parameters);
-                    SetParam("@targetdir", entry.TargetDir, cmdInsertOne.Parameters);
-                    SetParam("@primary_url", entry.PrimaryUrl, cmdInsertOne.Parameters);
-                    SetParam("@referer_url", entry.RefererUrl, cmdInsertOne.Parameters);
+                    SetParam("@targetdir", (object?)entry.TargetDir ?? DBNull.Value, cmdInsertOne.Parameters);
+                    SetParam("@primary_url", (object?)entry.PrimaryUrl ?? DBNull.Value, cmdInsertOne.Parameters);
+                    SetParam("@referer_url", (object?)entry.RefererUrl ?? DBNull.Value, cmdInsertOne.Parameters);
                     SetParam("@auth", entry.Authentication.HasValue ? 1 : 0, cmdInsertOne.Parameters);
-                    SetParam("@user", entry.Authentication?.UserName ?? null, cmdInsertOne.Parameters);
-                    SetParam("@pass", entry.Authentication?.Password ?? null, cmdInsertOne.Parameters);
+                    SetParam("@user", (object?)entry.Authentication?.UserName ?? DBNull.Value, cmdInsertOne.Parameters);
+                    SetParam("@pass", (object?)entry.Authentication?.Password ?? DBNull.Value, cmdInsertOne.Parameters);
                     SetParam("@proxy", (int)(entry.Proxy?.ProxyType ?? 0), cmdInsertOne.Parameters);
-                    SetParam("@proxy_host", entry.Proxy?.Host ?? null, cmdInsertOne.Parameters);
+                    SetParam("@proxy_host", (object?)entry.Proxy?.Host ?? DBNull.Value, cmdInsertOne.Parameters);
                     SetParam("@proxy_port", (int)(entry.Proxy?.Port ?? 0), cmdInsertOne.Parameters);
-                    SetParam("@proxy_user", entry.Proxy?.UserName ?? null, cmdInsertOne.Parameters);
-                    SetParam("@proxy_pass", entry.Proxy?.Password ?? null, cmdInsertOne.Parameters);
+                    SetParam("@proxy_user", (object?)entry.Proxy?.UserName ?? DBNull.Value, cmdInsertOne.Parameters);
+                    SetParam("@proxy_pass", (object?)entry.Proxy?.Password ?? DBNull.Value, cmdInsertOne.Parameters);
                     SetParam("@proxy_type", 1, cmdInsertOne.Parameters);
                     cmdInsertOne.ExecuteNonQuery();
                     return true;
@@ -255,18 +255,18 @@ namespace XDM.Core.DataAccess
                     SetParam("@name", entry.Name, cmdUpdateOne.Parameters);
                     SetParam("@date_added", entry.DateAdded.ToBinary(), cmdUpdateOne.Parameters);
                     SetParam("@size", entry.Size, cmdUpdateOne.Parameters);
-                    SetParam("@download_type", entry.DownloadType, cmdUpdateOne.Parameters);
-                    SetParam("@primary_url", entry.PrimaryUrl, cmdUpdateOne.Parameters);
+                    SetParam("@download_type", (object?)entry.DownloadType ?? DBNull.Value, cmdUpdateOne.Parameters);
+                    SetParam("@primary_url", (object?)entry.PrimaryUrl ?? DBNull.Value, cmdUpdateOne.Parameters);
                     SetParam("@auth", entry.Authentication.HasValue ? 1 : 0, cmdUpdateOne.Parameters);
-                    SetParam("@user", entry.Authentication?.UserName ?? null, cmdUpdateOne.Parameters);
-                    SetParam("@pass", entry.Authentication?.Password ?? null, cmdUpdateOne.Parameters);
+                    SetParam("@user", (object?)entry.Authentication?.UserName ?? DBNull.Value, cmdUpdateOne.Parameters);
+                    SetParam("@pass", (object?)entry.Authentication?.Password ?? DBNull.Value, cmdUpdateOne.Parameters);
                     SetParam("@proxy", (int)(entry.Proxy?.ProxyType ?? 0), cmdUpdateOne.Parameters);
-                    SetParam("@proxy_host", entry.Proxy?.Host ?? null, cmdUpdateOne.Parameters);
+                    SetParam("@proxy_host", (object?)entry.Proxy?.Host ?? DBNull.Value, cmdUpdateOne.Parameters);
                     SetParam("@proxy_port", (int)(entry.Proxy?.Port ?? 0), cmdUpdateOne.Parameters);
-                    SetParam("@proxy_user", entry.Proxy?.UserName ?? null, cmdUpdateOne.Parameters);
-                    SetParam("@proxy_pass", entry.Proxy?.Password ?? null, cmdUpdateOne.Parameters);
+                    SetParam("@proxy_user", (object?)entry.Proxy?.UserName ?? DBNull.Value, cmdUpdateOne.Parameters);
+                    SetParam("@proxy_pass", (object?)entry.Proxy?.Password ?? DBNull.Value, cmdUpdateOne.Parameters);
                     SetParam("@proxy_type", 1, cmdUpdateOne.Parameters);
-                    SetParam("@targetdir", entry.TargetDir, cmdUpdateOne.Parameters);
+                    SetParam("@targetdir", (object?)entry.TargetDir ?? DBNull.Value, cmdUpdateOne.Parameters);
                     cmdUpdateOne.ExecuteNonQuery();
                     return true;
                 }
@@ -330,12 +330,14 @@ namespace XDM.Core.DataAccess
 
         private void SetParam<T>(string name, T value, SQLiteParameterCollection param)
         {
+            // Microsoft.Data.Sqlite requires DBNull.Value for null values, not null
+            var actualValue = value == null ? (object)DBNull.Value : value;
             if (!param.Contains(name))
             {
-                param.AddWithValue(name, value);
+                param.AddWithValue(name, actualValue);
                 return;
             }
-            param[name].Value = value;
+            param[name].Value = actualValue;
         }
 
         public bool MarkAsFinished(string id, long finalFileSize, string file, string folder)
