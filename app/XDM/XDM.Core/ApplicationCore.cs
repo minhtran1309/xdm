@@ -129,6 +129,7 @@ namespace XDM.Core
             AuthenticationInfo? authentication,
             ProxyInfo? proxyInfo)
         {
+            Console.Error.WriteLine($"[DEBUG] StartDownload: id={download.Id}, fileName={download.TargetFileName}, startImmediately={startImmediately}");
             if (!awakePingTimer.Enabled)
             {
                 Log.Debug("Starting keep awaik timer");
@@ -143,6 +144,7 @@ namespace XDM.Core
             }
             else if (liveDownloads.Count >= Config.Instance.MaxParallelDownloads)
             {
+                Console.Error.WriteLine($"[DEBUG] MaxParallelDownloads reached ({Config.Instance.MaxParallelDownloads}), queueing download");
                 startImmediately = false;
                 queuedDownloads.Add(id, false);
             }
@@ -154,6 +156,7 @@ namespace XDM.Core
 
             if (startImmediately)
             {
+                Console.Error.WriteLine($"[DEBUG] Attaching event handlers and starting download id={download.Id}");
                 this.liveDownloads.Add(download.Id, new KeyValuePair<IBaseDownloader, bool>(download, false));
                 download.Started += HandleDownloadStart;
                 download.Probed += HandleProbeResult;
@@ -381,9 +384,11 @@ namespace XDM.Core
 
         void DownloadProgressChanged(object source, ProgressResultEventArgs args)
         {
+            Console.Error.WriteLine($"[DEBUG] DownloadProgressChanged event: progress={args.Progress}%, speed={args.DownloadSpeed}, eta={args.Eta}");
             lock (this)
             {
                 var http = source as IBaseDownloader;
+                Console.Error.WriteLine($"[DEBUG] Calling Application.UpdateProgress for id={http.Id}");
                 ApplicationContext.Application.UpdateProgress(http.Id, args.Progress, args.DownloadSpeed, args.Eta);
                 if (activeProgressWindows.ContainsKey(http.Id))
                 {

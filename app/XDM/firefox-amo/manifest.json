@@ -2,7 +2,7 @@
     "name": "XDM v8+ Browser Helper",
     "browser_action": {},
     "manifest_version": 2,
-    "version": "1.4",
+    "version": "8.1",
     "description": "Download files with XDM v8+",
     "permissions": [
         "tabs",
@@ -14,6 +14,7 @@
         "webRequestBlocking",
         "*://*/*"
     ],
+    "content_security_policy": "script-src 'self'; connect-src 'self' http://127.0.0.1:8597 http://localhost:8597;",
     "background": {
         "page": "main.html"
     },

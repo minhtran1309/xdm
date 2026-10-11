@@ -14,6 +14,7 @@ class App {
         this.onTabUpdateCallback = this.onTabUpdate.bind(this);
         this.activeTabId = -1;
         this.connector = new Connector(this.onMessage.bind(this), this.onDisconnect.bind(this));
+        this.pendingVideos = []; // Queue for videos detected before connection established
     }
 
     start() {
@@ -43,6 +44,19 @@ class App {
             mediaTypes: msg.mediaTypes
         });
         this.updateActionIcon();
+
+        // Flush pending videos that were detected before connection was established
+        if (this.pendingVideos.length > 0 && this.connector.isConnected()) {
+            this.logger.log("Flushing " + this.pendingVideos.length + " pending videos");
+            this.pendingVideos.forEach(data => {
+                if (data.download) {
+                    this.connector.postMessage("/download", data);
+                } else {
+                    this.connector.postMessage("/media", data);
+                }
+            });
+            this.pendingVideos = [];
+        }
     }
 
     onDisconnect() {
@@ -60,11 +74,20 @@ class App {
         //Streaming video data received, send to native messaging application
         this.logger.log("onRequestDataReceived");
         this.logger.log(data);
-        if (this.isMonitoringEnabled() && this.connector.isConnected()) {
-            if (data.download) {
-                this.connector.postMessage("/download", data);
+
+        // Check if monitoring is enabled (user preference and app config)
+        if (this.appEnabled === true && this.userDisabled === false) {
+            if (this.connector.isConnected()) {
+                // Send immediately if already connected
+                if (data.download) {
+                    this.connector.postMessage("/download", data);
+                } else {
+                    this.connector.postMessage("/media", data);
+                }
             } else {
-                this.connector.postMessage("/media", data);
+                // Queue for later if not connected yet (race condition during startup)
+                this.logger.log("Not connected yet, queueing video for later");
+                this.pendingVideos.push(data);
             }
         }
     }

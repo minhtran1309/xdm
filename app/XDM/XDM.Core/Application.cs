@@ -52,6 +52,7 @@ namespace XDM.Core
             AuthenticationInfo? authentication,
             ProxyInfo? proxyInfo)
         {
+            Console.Error.WriteLine($"[DEBUG] AddItemToTop: id={id}, fileName={targetFileName}, size={fileSize}");
             var downloadEntry = new InProgressDownloadItem
             {
                 Name = targetFileName,
@@ -70,10 +71,12 @@ namespace XDM.Core
 
             RunOnUiThread(() =>
             {
+                Console.Error.WriteLine($"[DEBUG] Adding download to UI: id={id}");
                 ApplicationContext.MainWindow.AddToTop(downloadEntry);
                 ApplicationContext.MainWindow.SwitchToInProgressView();
                 ApplicationContext.MainWindow.ClearInProgressViewSelection();
                 UpdateToolbarButtonState();
+                Console.Error.WriteLine($"[DEBUG] Download added to UI successfully");
             });
         }
 
@@ -307,17 +310,24 @@ namespace XDM.Core
 
         private void UpdateProgressOnUI(string id, int progress, double speed, long eta)
         {
+            Console.Error.WriteLine($"[DEBUG] UpdateProgressOnUI: id={id}, progress={progress}%, speed={FormattingHelper.FormatSize(speed)}/s, eta={FormattingHelper.ToHMS(eta)}");
             var downloadEntry = ApplicationContext.MainWindow.FindInProgressItem(id);
             if (downloadEntry != null)
             {
+                Console.Error.WriteLine($"[DEBUG] Found download entry, updating progress to {progress}%");
                 downloadEntry.Progress = progress;
                 downloadEntry.DownloadSpeed = FormattingHelper.FormatSize(speed) + "/s";
                 downloadEntry.ETA = FormattingHelper.ToHMS(eta);
+            }
+            else
+            {
+                Console.Error.WriteLine($"[DEBUG] Could not find download entry with id={id}");
             }
         }
 
         public void UpdateProgress(string id, int progress, double speed, long eta)
         {
+            Console.Error.WriteLine($"[DEBUG] UpdateProgress called: id={id}, progress={progress}%");
             if (!AppDB.Instance.Downloads.UpdateDownloadProgress(id, progress))
             {
                 Log.Debug("UpdateProgress::failed");

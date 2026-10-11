@@ -64,8 +64,10 @@ namespace XDM.GtkUI
             get => DownloadEntry.Progress;
             set
             {
+                Console.Error.WriteLine($"[DEBUG] InProgressEntryWrapper.Progress setter: id={DownloadEntry.Id}, progress={value}%");
                 this.DownloadEntry.Progress = value;
                 store.SetValue(treeIter, 3, value);
+                Console.Error.WriteLine($"[DEBUG] store.SetValue completed for progress column");
             }
         }
 

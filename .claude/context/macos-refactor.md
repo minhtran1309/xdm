@@ -296,6 +296,55 @@ dotnet build
 - [ ] Safari browser extension not supported
 - [ ] System.Data.SQLite.Core ARM64 compatibility unverified (fallback: Microsoft.Data.Sqlite)
 
+## macOS-Specific Issues and Solutions
+
+### Issue 1: GTK Builder.AddFromFile() Path Encoding Error
+**Problem:** GTK's `Builder.AddFromFile()` throws "Invalid byte sequence in conversion input" error on macOS when loading glade UI definition files.
+
+**Root Cause:** GLib.Marshaller.StringToFilenamePtr() has encoding issues on macOS when converting .NET strings to GLib filename pointers, even with valid UTF-8 paths.
+
+**Solution:** Load glade files using `File.ReadAllText()` + `Builder.AddFromString()` instead of `AddFromFile()`:
+
+```csharp
+// BEFORE (fails on macOS):
+var builder = new Builder();
+builder.AddFromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "dialog.glade"));
+
+// AFTER (works on macOS):
+var builder = new Builder();
+var gladePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "dialog.glade");
+var gladeContent = File.ReadAllText(gladePath);
+builder.AddFromString(gladeContent);
+```
+
+**Files Fixed:**
+- `XDM.Gtk.UI.macOS/Dialogs/NewDownload/NewDownloadWindow.cs` (line 49-62)
+- May need to apply to other dialog classes if they experience the same issue
+
+**Impact:** This workaround bypasses the GLib marshalling layer entirely and works reliably across all platforms.
+
+### Issue 2: GTK Window Visibility on macOS
+**Problem:** GTK windows created but not visible on macOS, requiring explicit `Present()` call in addition to `Show()` and `ShowAll()`.
+
+**Root Cause:** macOS window manager requires explicit focus/raise for GTK windows to become visible and interactive.
+
+**Solution:** Call all three methods in sequence for GTK windows:
+
+```csharp
+public void ShowWindow()
+{
+    this.ShowAll();  // Show all child widgets
+    this.Show();     // Make window visible
+    this.Present();  // Bring to front and focus (critical on macOS)
+}
+```
+
+**Files Fixed:**
+- `XDM.Gtk.UI.macOS/Program.cs` (line 103-106) - MainWindow visibility
+- `XDM.Gtk.UI.macOS/Dialogs/NewDownload/NewDownloadWindow.cs` (line 176-185) - Dialog visibility
+
+**Impact:** Without `Present()`, windows are created but remain invisible/unfocused on macOS.
+
 ## Implementation Workflow
 
 ### Git Branching

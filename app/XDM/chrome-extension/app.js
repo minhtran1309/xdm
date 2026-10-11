@@ -18,6 +18,7 @@ export default class App {
         this.onTabUpdateCallback = this.onTabUpdate.bind(this);
         this.activeTabId = -1;
         this.connector = new Connector(this.onMessage.bind(this), this.onDisconnect.bind(this));
+        this.pendingVideos = []; // Queue for videos detected before connection established
     }
 
     start() {
@@ -46,6 +47,15 @@ export default class App {
             mediaTypes: msg.mediaTypes
         });
         this.updateActionIcon();
+
+        // Flush pending videos that were detected before connection was established
+        if (this.pendingVideos.length > 0 && this.connector.isConnected()) {
+            this.logger.log("Flushing " + this.pendingVideos.length + " pending videos");
+            this.pendingVideos.forEach(data => {
+                this.connector.postMessage("/media", data);
+            });
+            this.pendingVideos = [];
+        }
     }
 
     onDisconnect() {
@@ -63,7 +73,18 @@ export default class App {
         //Streaming video data received, send to native messaging application
         this.logger.log("onRequestDataReceived");
         this.logger.log(data);
-        this.isMonitoringEnabled() && this.connector.isConnected() && this.connector.postMessage("/media", data);
+
+        // Check if monitoring is enabled (user preference and app config)
+        if (this.appEnabled === true && this.userDisabled === false) {
+            if (this.connector.isConnected()) {
+                // Send immediately if already connected
+                this.connector.postMessage("/media", data);
+            } else {
+                // Queue for later if not connected yet (race condition during startup)
+                this.logger.log("Not connected yet, queueing video for later");
+                this.pendingVideos.push(data);
+            }
+        }
     }
 
     onDeterminingFilename(download, suggest) {

@@ -312,6 +312,9 @@ namespace XDM.Core.BrowserMonitoring
 
         public void AddVideoDownload(string videoId)
         {
+            Log.Debug($"[VID] Received video download request for ID: {videoId}");
+            Log.Debug($"[VID] ytVideoList count: {ytVideoList.Count}, videoList count: {videoList.Count}, hlsVideoList count: {hlsVideoList.Count}, dashVideoList count: {dashVideoList.Count}");
+
             var name = string.Empty;
             var size = 0L;
             var contentType = string.Empty;
@@ -355,8 +358,10 @@ namespace XDM.Core.BrowserMonitoring
             }
             if (valid)
             {
+                Log.Debug($"[VID] Video found! Name: {name}, Size: {size}, Type: {contentType}");
                 if (Config.Instance.StartDownloadAutomatically && IsFFmpegOK(videoId))
                 {
+                    Log.Debug("[VID] Starting download automatically");
                     StartVideoDownload(
                         videoId, FileHelper.SanitizeFileName(name),
                         null, true, null, Config.Instance.Proxy,
@@ -364,8 +369,14 @@ namespace XDM.Core.BrowserMonitoring
                 }
                 else
                 {
+                    Log.Debug("[VID] Showing video download dialog");
                     ApplicationContext.Application.ShowVideoDownloadDialog(videoId, name, size, contentType);
                 }
+            }
+            else
+            {
+                Log.Debug($"[VID] ERROR: Video ID '{videoId}' not found in any video list!");
+                Log.Debug($"[VID] Total videos in memory: yt={ytVideoList.Count}, video={videoList.Count}, hls={hlsVideoList.Count}, dash={dashVideoList.Count}");
             }
         }
 

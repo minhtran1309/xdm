@@ -332,7 +332,7 @@ namespace XDM.GtkUI.Dialogs.ProgressWindow
         public static DownloadProgressWindow CreateFromGladeFile()
         {
             var builder = new Builder();
-            builder.AddFromFile(IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "download-progress-window.glade"));
+            GtkHelper.SafeLoadGlade(builder, IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "download-progress-window.glade"));
             return new DownloadProgressWindow(builder);
         }
     }

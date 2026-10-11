@@ -12,6 +12,8 @@ export default class Connector {
     }
 
     connect() {
+        //Try immediate connection to reduce race condition window
+        this.onTimer();
         for (let i = 0; i < 12; i++) {
             chrome.alarms.create("alerm-" + i, {
                 periodInMinutes: 1,

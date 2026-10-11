@@ -49,4 +49,10 @@
     <Content Include="svg-icons\**" CopyToOutputDirectory="PreserveNewest" Condition="Exists('svg-icons')" />
     <Content Include="xdm-logo-512.png" CopyToOutputDirectory="Always" Condition="Exists('xdm-logo-512.png')" />
   </ItemGroup>
+
+  <!-- Include browser extensions -->
+  <ItemGroup>
+    <Content Include="..\chrome-extension\**" CopyToOutputDirectory="Always" LinkBase="chrome-extension\" />
+    <Content Include="..\firefox-amo\**" CopyToOutputDirectory="Always" LinkBase="firefox-amo\" />
+  </ItemGroup>
 </Project>

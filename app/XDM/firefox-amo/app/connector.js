@@ -12,6 +12,8 @@ class Connector {
 
     connect() {
         //This will be replaced with websocket in future versions
+        //Try immediate connection to reduce race condition window
+        this.onTimer();
         setInterval(this.onTimer.bind(this), 5000);
     }
 
