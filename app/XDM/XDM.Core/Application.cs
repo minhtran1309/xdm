@@ -285,10 +285,22 @@ namespace XDM.Core
 
         public void ShowVideoDownloadDialog(string videoId, string name, long size, string? contentType)
         {
+            Log.Debug($"[DIALOG-FLOW] Application.ShowVideoDownloadDialog called for videoId: {videoId}");
             RunOnUiThread(() =>
             {
-                NewVideoDownloadDialogUIController.ShowVideoDownloadDialog(this.CreateNewVideoDialog(),
-                    videoId, name, size, contentType);
+                Log.Debug($"[DIALOG-FLOW] RunOnUiThread executing, creating dialog...");
+                try
+                {
+                    var dialog = this.CreateNewVideoDialog();
+                    Log.Debug($"[DIALOG-FLOW] Dialog created, calling controller...");
+                    NewVideoDownloadDialogUIController.ShowVideoDownloadDialog(dialog, videoId, name, size, contentType);
+                    Log.Debug($"[DIALOG-FLOW] Controller returned");
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug($"[DIALOG-FLOW] ERROR: {ex.GetType().Name}: {ex.Message}");
+                    Log.Debug($"[DIALOG-FLOW] Stack trace: {ex.StackTrace}");
+                }
             });
         }
 

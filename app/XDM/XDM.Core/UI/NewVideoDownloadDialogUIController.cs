@@ -12,6 +12,7 @@ namespace XDM.Core.UI
         public static void ShowVideoDownloadDialog(INewVideoDownloadDialog window,
             string id, string name, long size, string? contentType)
         {
+            TraceLog.Log.Debug($"[DIALOG-FLOW] Controller.ShowVideoDownloadDialog called for id: {id}, name: {name}");
             window.SetFolderValues(CommonUtils.GetFolderValues());
             if (Config.Instance.FolderSelectionMode == FolderSelectionMode.Auto)
             {
@@ -113,7 +114,9 @@ namespace XDM.Core.UI
                 ApplicationContext.Application.ShowQueueWindow(s);
             };
 
+            TraceLog.Log.Debug($"[DIALOG-FLOW] Controller: All event handlers attached, calling window.ShowWindow()...");
             window.ShowWindow();
+            TraceLog.Log.Debug($"[DIALOG-FLOW] Controller: window.ShowWindow() returned");
         }
 
         private static string AddMp3Extension(string name)

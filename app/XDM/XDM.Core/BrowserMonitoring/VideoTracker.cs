@@ -329,10 +329,29 @@ namespace XDM.Core.BrowserMonitoring
             }
             else if (videoList.ContainsKey(videoId))
             {
-                if (ApplicationContext.LinkRefresher.LinkAccepted(videoList[videoId].Key)) return;
-                name = videoList[videoId].Key.File;
+                Log.Debug($"[VID] Found in videoList, checking LinkRefresher...");
+                var videoData = videoList[videoId].Key;
+                var uri = videoData.Uri;
+                var cookies = videoData.Cookies;
+                var headers = videoData.Headers;
+
+                Log.Debug($"[VID-DATA] URI: {uri}");
+                Log.Debug($"[VID-DATA] File: {videoData.File}");
+                Log.Debug($"[VID-DATA] Size: {videoList[videoId].Value.Size} bytes");
+                Log.Debug($"[VID-DATA] Content-Type: {videoData.ContentType}");
+                Log.Debug($"[VID-DATA] Cookies: {(string.IsNullOrEmpty(cookies) ? "NONE" : cookies?.Substring(0, Math.Min(100, cookies.Length)))}");
+                Log.Debug($"[VID-DATA] Headers count: {headers?.Count ?? 0}");
+
+                if (ApplicationContext.LinkRefresher.LinkAccepted(videoData))
+                {
+                    Log.Debug($"[VID] LinkRefresher.LinkAccepted returned TRUE - dialog already shown, returning");
+                    return;
+                }
+
+                Log.Debug($"[VID] LinkRefresher.LinkAccepted returned FALSE - will show dialog");
+                name = videoData.File;
                 size = videoList[videoId].Value.Size;
-                contentType = videoList[videoId].Key.ContentType;
+                contentType = videoData.ContentType;
                 valid = true;
             }
             else if (hlsVideoList.ContainsKey(videoId))

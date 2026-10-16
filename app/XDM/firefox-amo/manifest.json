@@ -2,7 +2,7 @@
     "name": "XDM v8+ Browser Helper",
     "browser_action": {},
     "manifest_version": 2,
-    "version": "8.1",
+    "version": "8.2",
     "description": "Download files with XDM v8+",
     "permissions": [
         "tabs",

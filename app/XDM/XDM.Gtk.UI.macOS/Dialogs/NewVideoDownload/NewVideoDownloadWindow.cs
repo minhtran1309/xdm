@@ -57,9 +57,33 @@ namespace XDM.GtkUI.Dialogs.NewVideoDownload
 
         public static NewVideoDownloadWindow CreateFromGladeFile()
         {
-            var builder = new Builder();
-            builder.AddFromFile(IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "glade", "new-video-download-window.glade"));
-            return new NewVideoDownloadWindow(builder);
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var gladePath = IoPath.Combine(baseDir, "glade", "new-video-download-window.glade");
+
+            TraceLog.Log.Debug($"[DIALOG] CreateFromGladeFile - BaseDirectory: {baseDir}");
+            TraceLog.Log.Debug($"[DIALOG] CreateFromGladeFile - Glade path: {gladePath}");
+            TraceLog.Log.Debug($"[DIALOG] CreateFromGladeFile - File exists: {System.IO.File.Exists(gladePath)}");
+
+            try
+            {
+                var builder = new Builder();
+                TraceLog.Log.Debug($"[DIALOG] Builder created, reading glade file content...");
+
+                // Read file content as string to avoid GTK path encoding issues on macOS
+                var gladeContent = System.IO.File.ReadAllText(gladePath);
+                TraceLog.Log.Debug($"[DIALOG] Glade content read ({gladeContent.Length} bytes), loading into builder...");
+
+                builder.AddFromString(gladeContent);
+                TraceLog.Log.Debug($"[DIALOG] Glade content loaded successfully");
+
+                return new NewVideoDownloadWindow(builder);
+            }
+            catch (Exception ex)
+            {
+                TraceLog.Log.Debug($"[DIALOG] ERROR loading glade: {ex.GetType().Name}: {ex.Message}");
+                TraceLog.Log.Debug($"[DIALOG] Stack trace: {ex.StackTrace}");
+                throw;
+            }
         }
 
         private NewVideoDownloadWindow(Builder builder) : base(builder.GetRawOwnedObject("window"))
@@ -233,7 +257,11 @@ namespace XDM.GtkUI.Dialogs.NewVideoDownload
 
         public void ShowWindow()
         {
+            TraceLog.Log.Debug("[DIALOG] NewVideoDownloadWindow.ShowWindow() called");
             this.Show();
+            this.Present();  // Bring window to front on macOS
+            this.KeepAbove = true;  // Keep dialog above other windows
+            TraceLog.Log.Debug("[DIALOG] Window shown and presented");
         }
     }
 }

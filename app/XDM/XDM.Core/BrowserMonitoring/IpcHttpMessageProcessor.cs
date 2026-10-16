@@ -46,22 +46,28 @@ namespace XDM.Core.BrowserMonitoring
 
         public void HandleRequest(RequestContext context)
         {
+            Log.Debug($"[HTTP-REQUEST] Path: {context.RequestPath}");
             try
             {
                 switch (context.RequestPath)
                 {
                     case "/sync":
+                        Log.Debug("[HTTP-REQUEST] /sync matched");
                         break;
                     case "/download":
+                        Log.Debug("[HTTP-REQUEST] /download matched");
                         OnDownloadMessage(context);
                         break;
                     case "/media":
+                        Log.Debug("[HTTP-REQUEST] /media matched");
                         OnMediaMessage(context);
                         break;
                     case "/tab-update":
+                        Log.Debug("[HTTP-REQUEST] /tab-update matched");
                         OnTabUpdateMessage(context);
                         break;
                     case "/vid":
+                        Log.Debug("[HTTP-REQUEST] /vid matched");
                         OnVideoDownloadMessage(context);
                         break;
                     case "/clear":
@@ -97,12 +103,25 @@ namespace XDM.Core.BrowserMonitoring
 
         private void OnVideoDownloadMessage(RequestContext context)
         {
-            var msg = JsonConvert.DeserializeObject<ExtensionData>(Encoding.UTF8.GetString(context.RequestBody!));
+            Log.Debug("[VID-ENDPOINT] OnVideoDownloadMessage called");
+            Log.Debug($"[VID-ENDPOINT] Request body length: {context.RequestBody?.Length ?? 0}");
+
+            var bodyString = Encoding.UTF8.GetString(context.RequestBody!);
+            Log.Debug($"[VID-ENDPOINT] Request body: {bodyString}");
+
+            var msg = JsonConvert.DeserializeObject<ExtensionData>(bodyString);
+            Log.Debug($"[VID-ENDPOINT] Deserialized msg is null: {msg == null}");
+
             if (msg == null)
             {
+                Log.Debug("[VID-ENDPOINT] ERROR: msg is null, returning");
                 return;
             }
+
+            Log.Debug($"[VID-ENDPOINT] msg.Vid = '{msg.Vid}'");
+            Log.Debug($"[VID-ENDPOINT] Calling AddVideoDownload with vid: {msg.Vid}");
             ApplicationContext.VideoTracker.AddVideoDownload(msg.Vid);
+            Log.Debug("[VID-ENDPOINT] AddVideoDownload completed");
         }
 
         private void OnTabUpdateMessage(RequestContext context)

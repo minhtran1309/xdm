@@ -237,10 +237,13 @@ class App {
             this.updateActionIcon();
         }
         else if (request.type === "vid") {
+            console.log("[APP] Received vid message! itemId:", request.itemId);
             let vid = request.itemId;
+            console.log("[APP] Posting to /vid endpoint with vid:", vid);
             this.connector.postMessage("/vid", {
                 vid: vid + "",
             });
+            console.log("[APP] Posted to /vid endpoint");
         }
         else if (request.type === "clear") {
             this.connector.postMessage("/clear", {});

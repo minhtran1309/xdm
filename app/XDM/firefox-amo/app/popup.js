@@ -63,7 +63,9 @@ class VideoPopup {
             cell.appendChild(div);
 
             div.addEventListener('click', e => {
+                console.log("[POPUP] Click detected! Sending vid message for ID:", id);
                 chrome.runtime.sendMessage({ type: "vid", itemId: id });
+                console.log("[POPUP] Message sent, closing window");
                 window.close();
             });
         });

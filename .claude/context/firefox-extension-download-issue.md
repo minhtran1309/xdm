@@ -442,6 +442,78 @@ Applied identical fixes to Chrome extension with appropriate syntax for Manifest
 
 1. ✅ ~~Implement Option 3 fix in app.js and connector.js~~
 2. ✅ ~~Rebuild extension~~
-3. ⏳ Test with fresh browser session
+3. ✅ ~~Test with fresh browser session~~
 4. ✅ ~~Update both Firefox and Chrome extensions (same bug affects both)~~
-5. ✅ ~~Update extension version to 8.1~~
+5. ✅ ~~Update extension version to 8.2 (with debug logging)~~
+
+## Update: 2026-10-14 - macOS Dialog Display Issue Fixed
+
+### Issue Discovery
+
+After implementing the race condition fix (v8.1), testing on macOS revealed a **new issue**: the download dialog was not appearing when clicking videos in the extension popup.
+
+#### Investigation Process
+
+1. **Backend Verification** ✅
+   - Extension successfully sends `/vid` POST request
+   - XDM receives request and finds video in `videoList`
+   - Video metadata (URL, headers, size) correctly stored
+   - Log shows: `[VID] Showing video download dialog`
+
+2. **Dialog Creation Failure** ❌
+   - `Application.ShowVideoDownloadDialog()` is called
+   - `RunOnUiThread()` executes
+   - **Crashes when creating dialog**: `GException: Invalid byte sequence in conversion input`
+   - Error occurs in: `GLib.Marshaller.StringToFilenamePtr(String str)`
+   - Specifically fails at: `builder.AddFromFile(gladePath)`
+
+#### Root Cause
+
+**GTK encoding issue on macOS**: GTK's `GLib.Marshaller.StringToFilenamePtr()` cannot handle the file path encoding when loading `.glade` files via `builder.AddFromFile()` on macOS, even though the file exists and path is valid.
+
+**Error Details:**
+```
+File: /Applications/XDM.app/Contents/MacOS/glade/new-video-download-window.glade
+File exists: True
+Error: GException: Invalid byte sequence in conversion input
+      at GLib.Marshaller.StringToFilenamePtr(String str)
+```
+
+#### Solution Implemented
+
+**File**: `XDM.Gtk.UI.macOS/Dialogs/NewVideoDownload/NewVideoDownloadWindow.cs:58`
+
+Changed from path-based loading to string-based loading:
+
+```csharp
+// OLD (fails on macOS):
+builder.AddFromFile(gladePath);
+
+// NEW (works on macOS):
+var gladeContent = System.IO.File.ReadAllText(gladePath);
+builder.AddFromString(gladeContent);
+```
+
+This bypasses GTK's problematic path encoding marshaller while achieving the same result.
+
+#### Files Modified
+
+- `XDM.Gtk.UI.macOS/Dialogs/NewVideoDownload/NewVideoDownloadWindow.cs` - Fixed glade loading
+- `XDM.Core/Application.cs` - Added dialog flow logging
+- `XDM.Core/UI/NewVideoDownloadDialogUIController.cs` - Added controller logging
+- `XDM.Core/BrowserMonitoring/VideoTracker.cs` - Added video data logging
+- `firefox-amo/manifest.json` - Version 8.2
+- `chrome-extension/manifest.json` - Version 8.2
+
+#### Testing Status
+
+- Extension v8.2: ✅ Race condition fixed, videos queued until connected
+- Backend: ✅ Videos detected, stored, and retrieved correctly
+- Dialog: ⏳ Testing fix for GTK encoding issue
+
+#### Install Script Created
+
+Created `/tmp/install-xdm.sh` for consistent builds and deployment:
+```bash
+/tmp/install-xdm.sh  # Builds, installs to /Applications/XDM.app, starts with XDM_DEBUG_MODE=1
+```
